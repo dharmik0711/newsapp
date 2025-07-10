@@ -20,3 +20,4 @@ export class NewsItem extends Component {
 }
 
 export default NewsItem;
+// now we will dinamically pudh the api
