@@ -4,41 +4,84 @@ import NewsItem from './NewsItem';
 export class News extends Component {
   constructor() {
     super();
-    console.log("Hello I am a constructor from News Component");
-
-   
-
     this.state = {
-      articles: [], // ✅ use the const articles declared above
-      loading: false
+      articles: [],
+      loading: false,
+      page: 1,
+      totalResults: 0,
+      pageSize: 6
     };
   }
 
-async componentDidMount() {
-  let url = "https://newsapi.org/v2/top-headlines?sources=techcrunch&apiKey=ae1ed1538bd44052a573e8706a7e56a3";
-  let data = await fetch(url);
-  let parsedData = await data.json();
-  console.log(parsedData);
-  this.setState({ articles: parsedData.articles });
-}
+  async fetchArticles(page) {
+    this.setState({ loading: true });
 
+    const url = `https://newsapi.org/v2/top-headlines?sources=techcrunch&apiKey=ae1ed1538bd44052a573e8706a7e56a3&page=${page}&pageSize=${this.state.pageSize}`;
+
+    const data = await fetch(url);
+    const parsedData = await data.json();
+
+    this.setState({
+      articles: parsedData.articles,
+      totalResults: parsedData.totalResults,
+      page: page,
+      loading: false
+    });
+  }
+
+  componentDidMount() {
+    this.fetchArticles(this.state.page);
+  }
+
+  handleNextClick = () => {
+    const totalPages = Math.ceil(this.state.totalResults / this.state.pageSize);
+    if (this.state.page < totalPages) {
+      this.fetchArticles(this.state.page + 1);
+    }
+  }
+
+  handlePrevClick = () => {
+    if (this.state.page > 1) {
+      this.fetchArticles(this.state.page - 1);
+    }
+  }
 
   render() {
+    const totalPages = Math.ceil(this.state.totalResults / this.state.pageSize);
+
     return (
-      <div className='container my-3'>
-        <h2>NewsMonkey top - headline</h2>
+      <div className="container my-3">
+        <h2 className="text-center">NewsMonkey - Top Headlines</h2>
+        {this.state.loading && <h4 className="text-center">Loading...</h4>}
+
         <div className="row">
-          {this.state.articles.map((element, index) => {
-            return (
-              <div className='col-md-4' key={index}>
-                <NewsItem
-                  title={element.title?element.title.slice(0,45):""}
-                  description={element.description?element.description.slice(0,60):""}
-                  imageUrl={element.urlToImage}
-                  newsUrl = {element.url}  />
-              </div>
-            );
-          })}
+          {this.state.articles.map((element, index) => (
+            <div className="col-md-4 my-2" key={element.url || index}>
+              <NewsItem
+                title={element.title ? element.title.slice(0, 70) + "..." : ""}
+                description={element.description ? element.description.slice(0, 90) + "..." : ""}
+                imageUrl={element.urlToImage}
+                newsUrl={element.url}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="container d-flex justify-content-between my-3">
+          <button
+            disabled={this.state.page <= 1}
+            className="btn btn-dark"
+            onClick={this.handlePrevClick}
+          >
+            &larr; Previous
+          </button>
+          <button
+            disabled={this.state.page >= totalPages}
+            className="btn btn-dark"
+            onClick={this.handleNextClick}
+          >
+            Next &rarr;
+          </button>
         </div>
       </div>
     );
