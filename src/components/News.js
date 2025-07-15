@@ -1,8 +1,19 @@
 import React, { Component } from 'react';
 import NewsItem from './NewsItem';
 import Spinner from './Spinner';
+import PropTypes from 'prop-types'
 
 export class News extends Component {
+
+  static defaultProps={
+    country:'us',
+    category: 'general'
+  }
+  static propTypes={
+    country:PropTypes.string,
+    category:PropTypes.string
+  }
+
   constructor() {
     super();
     this.state = {
@@ -10,14 +21,14 @@ export class News extends Component {
       loading: false,
       page: 1,
       totalResults: 0,
-      pageSize: 6
+      pageSize: 5
     };
   }
 
   async fetchArticles(page) {
     this.setState({ loading: true });
 
-    const url = `https://newsapi.org/v2/top-headlines?sources=techcrunch&apiKey=ae1ed1538bd44052a573e8706a7e56a3&page=${page}&pageSize=${this.state.pageSize}`;
+    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=ae1ed1538bd44052a573e8706a7e56a3&page=${page}&pageSize=${this.state.pageSize}`;
 
     const data = await fetch(url);
     const parsedData = await data.json();
