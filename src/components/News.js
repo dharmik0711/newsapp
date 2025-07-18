@@ -76,6 +76,8 @@ export class News extends Component {
                   imageUrl={element.urlToImage}
                   newsUrl={element.url}
                   mode={this.props.mode}
+                  author={element.author}
+                  date={element.publishedAt}
                 />
               </div>
             ))}

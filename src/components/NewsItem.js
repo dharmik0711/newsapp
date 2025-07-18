@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 export class NewsItem extends Component {
   render() {
-    let { title, description, imageUrl, newsUrl, mode } = this.props;
+    let { title, description, imageUrl, newsUrl, mode,author,date } = this.props;
     const cardClass = mode === 'dark' ? 'bg-dark text-white' : '';
 
     return (
@@ -12,6 +12,7 @@ export class NewsItem extends Component {
           <div className="card-body">
             <h5 className="card-title">{title}</h5>
             <p className="card-text">{description}</p>
+            <p className='card-text'><small className='text-muted'>By {!author?"Unkonwn":author} on {date}</small></p>
             <a href={newsUrl} target="_blank" rel="noreferrer" className="btn btn-sm btn-primary">
               Read More
             </a>
