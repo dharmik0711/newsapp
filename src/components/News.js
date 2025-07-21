@@ -78,6 +78,7 @@ export class News extends Component {
                   mode={this.props.mode}
                   author={element.author}
                   date={element.publishedAt}
+                  source={element.source.name}
                 />
               </div>
             ))}
